@@ -1,4 +1,5 @@
 {
+  "root": true,
   "env": {
     "browser": true,
     "commonjs": true,
@@ -6,25 +7,31 @@
     "es6": true,
     "jest": true
   },
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
+    "project": "./tsconfig.json",
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     },
     "requireConfigFile": false
   },
-  "extends": [
-    "next/core-web-vitals",
-    "airbnb",
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:jsx-a11y/recommended"
-  ],
   "plugins": [
+    "@typescript-eslint",
     "import",
     "react",
     "react-hooks",
     "jsx-a11y"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next/core-web-vitals",
+    "airbnb",
+    "airbnb-typescript",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
   "settings": {
     "react": {
@@ -74,7 +81,15 @@
       "error",
       "never"
     ],
+    "@typescript-eslint/semi": [
+      "error",
+      "never"
+    ],
     "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "@typescript-eslint/comma-dangle": [
       "error",
       "never"
     ],
