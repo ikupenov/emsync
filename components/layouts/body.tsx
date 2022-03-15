@@ -1,15 +1,16 @@
 import React from 'react'
 
-import { Container } from '@chakra-ui/react'
+import { Container, ContainerProps } from '@chakra-ui/react'
 
-export interface BodyProps {
-  width: number | string
-  children: React.ReactNode
-}
-
-export function Body({ width, children }: BodyProps) {
+export function Body({ width, centerContent, children }: ContainerProps) {
   return (
-    <Container as="main" w="full" maxW={width} py={8}>
+    <Container
+      as="main"
+      w="full"
+      maxW={width}
+      py={8}
+      centerContent={centerContent}
+    >
       {children}
     </Container>
   )

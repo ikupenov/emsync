@@ -104,6 +104,7 @@
         "requireForBlockBody": true
       }
     ],
+    "react/require-default-props": [0],
     "operator-linebreak": "off",
     "no-nested-ternary": 0
   }

@@ -52,11 +52,8 @@ function Home() {
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  return {
-    props: {
-      session: await getSession(context)
-    }
-  }
+  const session = await getSession(context)
+  return { props: { session } }
 }
 
 export default Home

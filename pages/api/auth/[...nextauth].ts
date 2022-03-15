@@ -24,8 +24,14 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_SECRET!
     })
   ],
+  pages: {
+    signIn: '/auth/sign-in',
+    signOut: '/auth/sign-out'
+  },
   theme: {
-    colorScheme: 'light'
+    colorScheme: 'dark',
+    brandColor: '#f79489',
+    logo: ''
   },
   callbacks: {
     async jwt({ token }) {

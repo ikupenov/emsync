@@ -11,8 +11,9 @@ export const PAGE_BODY_ID = 'page-body'
 
 export interface PageProps {
   title: string
-  headerVisible: boolean
-  width: number | string
+  headerVisible?: boolean
+  width?: number | string
+  centerContent?: boolean
   children: React.ReactNode
 }
 
@@ -20,6 +21,7 @@ export function Page({
   title,
   headerVisible = true,
   width = 'container.lg',
+  centerContent = false,
   children
 }: PageProps) {
   return (
@@ -32,7 +34,11 @@ export function Page({
       {headerVisible && <Header id={PAGE_HEADER_ID} />}
 
       <Box>
-        <Body width={width}>
+        <Body
+          id={PAGE_BODY_ID}
+          width={width}
+          centerContent={centerContent}
+        >
           {children}
         </Body>
       </Box>
