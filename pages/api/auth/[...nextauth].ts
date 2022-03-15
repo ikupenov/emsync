@@ -25,8 +25,7 @@ export default NextAuth({
     })
   ],
   pages: {
-    signIn: '/auth/sign-in',
-    signOut: '/auth/sign-out'
+    signIn: '/auth/sign-in'
   },
   theme: {
     colorScheme: 'dark',

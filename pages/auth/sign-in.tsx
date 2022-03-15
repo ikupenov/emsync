@@ -1,4 +1,10 @@
-import { ClientSafeProvider, getProviders, signIn } from 'next-auth/react'
+import { NextPageContext } from 'next'
+import {
+  ClientSafeProvider,
+  getProviders,
+  getSession,
+  signIn
+} from 'next-auth/react'
 import { Box, Button } from '@chakra-ui/react'
 
 import { Page } from '../../components/layouts'
@@ -21,7 +27,18 @@ export default function SignIn({ providers }: SignInProps) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: NextPageContext) {
   const providers = await getProviders()
-  return { props: { providers } }
+  const session = await getSession(context)
+
+  if (session?.user) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    }
+  }
+
+  return { props: { providers, session } }
 }

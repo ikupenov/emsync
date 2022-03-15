@@ -1,11 +1,11 @@
 import { NextPageContext } from 'next'
-import Link from 'next/link'
-import { getSession, useSession } from 'next-auth/react'
+import { getSession, signOut, useSession } from 'next-auth/react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
   Button,
   ButtonGroup,
+  Link,
   Text
 } from '@chakra-ui/react'
 
@@ -25,11 +25,31 @@ function Home() {
   return (
     <Box>
       {status === 'authenticated' && (
-        <Text>Hello {session?.user?.name}</Text>
+        <>
+          <Text>Hello {session?.user?.name}</Text>
+
+          <Button
+            as={Link}
+            variant="link"
+            href="api/auth/sign-out"
+            onClick={(e) => {
+              e.preventDefault()
+              signOut()
+            }}
+          >
+            Sign out
+          </Button>
+        </>
       )}
 
       {status === 'unauthenticated' && (
-        <Link href="/api/auth/signin">Sign in</Link>
+        <Button
+          as={Link}
+          variant="link"
+          href="/auth/sign-in"
+        >
+          Sign in
+        </Button>
       )}
 
       <Text>{count}</Text>
