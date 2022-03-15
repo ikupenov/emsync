@@ -1,5 +1,3 @@
-import type { NextPage } from 'next'
-
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
@@ -11,7 +9,7 @@ import {
 import { RootState } from '../app/store'
 import { decrement, increment, incrementByAmount } from '../features/counter'
 
-const Home: NextPage = () => {
+function Home() {
   const count = useSelector((state: RootState) => state.counter.value)
   const dispatch = useDispatch()
 
