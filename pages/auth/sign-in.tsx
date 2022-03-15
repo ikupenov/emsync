@@ -1,10 +1,10 @@
-import { getProviders, signIn } from 'next-auth/react'
+import { ClientSafeProvider, getProviders, signIn } from 'next-auth/react'
 import { Box, Button } from '@chakra-ui/react'
 
 import { Page } from '../../components/layouts'
 
 interface SignInProps {
-  providers: [any]
+  providers: [ClientSafeProvider]
 }
 
 export default function SignIn({ providers }: SignInProps) {
