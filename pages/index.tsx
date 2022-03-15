@@ -1,3 +1,6 @@
+import { NextPageContext } from 'next'
+import Link from 'next/link'
+import { getSession, useSession } from 'next-auth/react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
@@ -7,15 +10,27 @@ import {
 } from '@chakra-ui/react'
 
 import { RootState } from '../app/store'
-import { decrement, increment, incrementByAmount } from '../features/counter'
+import {
+  increment,
+  decrement,
+  incrementByAmount
+} from '../features/counter'
 
 function Home() {
+  const { data: session, status } = useSession()
+
   const count = useSelector((state: RootState) => state.counter.value)
   const dispatch = useDispatch()
 
   return (
     <Box>
-      Hello
+      {status === 'authenticated' && (
+        <Text>Hello {session?.user?.name}</Text>
+      )}
+
+      {status === 'unauthenticated' && (
+        <Link href="/api/auth/signin">Sign in</Link>
+      )}
 
       <Text>{count}</Text>
 
@@ -34,6 +49,14 @@ function Home() {
       </ButtonGroup>
     </Box>
   )
+}
+
+export async function getServerSideProps(context: NextPageContext) {
+  return {
+    props: {
+      session: await getSession(context)
+    }
+  }
 }
 
 export default Home
