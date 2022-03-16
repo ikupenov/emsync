@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 
 import { useRouter } from 'next/router'
 import { isNil } from 'lodash-es'
-import { serialize } from 'cookie'
 import { useToast } from '@chakra-ui/react'
 
 import { SignInResult } from '../../services'
@@ -61,21 +60,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
       return { props: { error: serverError } }
     }
 
-    if (!isNil(accessToken)) {
-      const accessTokenCookie = serialize('emsync.spotify-at', accessToken, { path: '/' })
-      context.res?.setHeader('Set-Cookie', [accessTokenCookie])
-
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false
-        }
-      }
-    }
-
     return {
       redirect: {
-        destination: '/connect',
+        destination: isNil(accessToken) ? '/connect' : '/',
         permanent: false
       }
     }

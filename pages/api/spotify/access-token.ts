@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
 import qs from 'query-string'
 import { isNil } from 'lodash-es'
-import { serialize } from 'cookie'
 
 import {
   SPOTIFY_API_URL,
@@ -42,10 +41,6 @@ export default async function handler(
         data,
         options
       )
-
-      const accessTokenCookie = serialize('emsync.spotify-at', responseData.access_token, { path: '/' })
-      const refreshTokenCookie = serialize('emsync.spotify-rt', responseData.refresh_token, { path: '/' })
-      res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
 
       const {
         access_token: accessToken,
