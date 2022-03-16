@@ -12,7 +12,7 @@ import { persistReducer, persistStore } from 'redux-persist'
 import { storage } from './storage'
 import { spotifyApi } from './api/spotify'
 import { counterSlice, counterReducer } from '../features/counter'
-import { connectionsSlice, connectionsReducer } from '../features/connect'
+import { connectionsSlice, connectionsReducer } from '../features/connection'
 
 const combinedReducer = combineReducers({
   [spotifyApi.reducerPath]: spotifyApi.reducer,

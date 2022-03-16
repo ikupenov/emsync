@@ -10,7 +10,7 @@ import {
   connectSpotify,
   connectSpotifyFailed,
   selectSpotifyConnection
-} from '../../features/connect'
+} from '../../features/connection'
 
 export default function Callback() {
   const router = useRouter()

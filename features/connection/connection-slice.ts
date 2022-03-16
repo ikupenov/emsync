@@ -56,10 +56,14 @@ export const connectionsSlice = createSlice({
     builder
       .addCase(connectSpotify.pending, (state) => {
         state.spotify.status = 'loading'
+        state.spotify.data = null
+        state.spotify.error = null
+        state.spotify.connected = false
       })
       .addCase(connectSpotify.fulfilled, (state, { payload }) => {
         state.spotify.status = 'idle'
         state.spotify.data = payload
+        state.spotify.error = null
         state.spotify.connected = true
       })
       .addCase(connectSpotify.rejected, connectionsSlice.caseReducers.connectSpotifyFailed)
