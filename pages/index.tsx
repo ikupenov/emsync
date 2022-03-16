@@ -1,14 +1,13 @@
 import { NextPageContext } from 'next'
-import { getSession, signOut, useSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import {
-  Box,
   Button,
   ButtonGroup,
-  Link,
   Text
 } from '@chakra-ui/react'
 
 import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { Page } from '../components/layouts'
 import {
   increment,
   decrement,
@@ -23,33 +22,9 @@ function Home() {
   const dispatch = useAppDispatch()
 
   return (
-    <Box>
+    <Page title="Dashboard">
       {status === 'authenticated' && (
-        <>
-          <Text>Hello, {session?.user?.name}</Text>
-
-          <Button
-            as={Link}
-            variant="link"
-            href="api/auth/sign-out"
-            onClick={(e) => {
-              e.preventDefault()
-              signOut()
-            }}
-          >
-            Sign out
-          </Button>
-        </>
-      )}
-
-      {status === 'unauthenticated' && (
-        <Button
-          as={Link}
-          variant="link"
-          href="/auth/sign-in"
-        >
-          Sign in
-        </Button>
+        <Text>Hello, {session?.user?.name}</Text>
       )}
 
       <Text>{count}</Text>
@@ -67,7 +42,7 @@ function Home() {
           Increment by 5
         </Button>
       </ButtonGroup>
-    </Box>
+    </Page>
   )
 }
 
