@@ -44,6 +44,12 @@ function Home() {
               <Image
                 src={playlist.images[0].url}
                 objectFit="cover"
+                filter="grayscale()"
+                transition="filter 0.15s ease, transform 0.15s ease"
+                _hover={{
+                  filter: 'none',
+                  transform: 'scale(1.1)'
+                }}
               />
             </Box>
           ))}
