@@ -6,7 +6,7 @@ import { isNil } from 'lodash-es'
 import { serialize } from 'cookie'
 import { useToast } from '@chakra-ui/react'
 
-import { signIn } from '../../services/spotify'
+import { spotifyService } from '../../services'
 
 interface CallbackProps {
   error: string
@@ -49,7 +49,10 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   }
 
-  const { accessToken, error: serverError } = await signIn(code as string, state as string)
+  const {
+    accessToken,
+    error: serverError
+  } = await spotifyService.signIn(code as string, state as string)
 
   if (!isNil(serverError)) {
     return { props: { error: serverError } }

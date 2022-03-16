@@ -1,6 +1,5 @@
 import { NextPageContext } from 'next'
 import { getSession, signOut, useSession } from 'next-auth/react'
-import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
   Button,
@@ -9,18 +8,19 @@ import {
   Text
 } from '@chakra-ui/react'
 
-import { RootState } from '../app/store'
+import { useAppSelector, useAppDispatch } from '../app/hooks'
 import {
   increment,
   decrement,
-  incrementByAmount
+  incrementByAmount,
+  selectCount
 } from '../features/counter'
 
 function Home() {
   const { data: session, status } = useSession()
 
-  const count = useSelector((state: RootState) => state.counter.value)
-  const dispatch = useDispatch()
+  const count = useAppSelector(selectCount)
+  const dispatch = useAppDispatch()
 
   return (
     <Box>

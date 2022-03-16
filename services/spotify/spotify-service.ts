@@ -9,7 +9,7 @@ import {
 } from '../../config'
 import { apiClient } from '../../http'
 
-export function authorize() {
+function authorize() {
   const url = qs.stringifyUrl({
     url: `${SPOTIFY_BASE_URL}/authorize`,
     query: {
@@ -30,7 +30,12 @@ export interface SignInResult {
   error?: string
 }
 
-export async function signIn(code: string, state: string): Promise<SignInResult> {
+async function signIn(code: string, state: string): Promise<SignInResult> {
   const response = await apiClient.post('/spotify/access-token', { code, state })
   return response.data
 }
+
+export const spotifyService = Object.freeze({
+  authorize,
+  signIn
+})
