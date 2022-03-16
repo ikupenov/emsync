@@ -4,7 +4,7 @@ import qs from 'query-string'
 import { isNil } from 'lodash-es'
 
 import {
-  SPOTIFY_API_URL,
+  SPOTIFY_ACCOUNTS_API_URL,
   SPOTIFY_ID,
   SPOTIFY_REDIRECT_URL,
   SPOTIFY_SECRET
@@ -37,7 +37,7 @@ export default async function handler(
 
     try {
       const { data: responseData } = await axios.post(
-        `${SPOTIFY_API_URL}/token`,
+        `${SPOTIFY_ACCOUNTS_API_URL}/token`,
         data,
         options
       )

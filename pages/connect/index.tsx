@@ -11,6 +11,7 @@ export default function Connect() {
   return (
     <Page title="Connect providers">
       <Button
+        variant="outline"
         colorScheme={spotifyConnection.connected ? 'green' : 'gray'}
         onClick={() => spotifyService.authorize()}
       >

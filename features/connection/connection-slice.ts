@@ -3,8 +3,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '../../app/store'
 import { signIn } from '../../app/api/spotify'
 
+export interface SpotifyConnectionData {
+  accessToken: string
+}
+
 export interface SpotifyConnectionState {
-  data: object | null
+  data: SpotifyConnectionData | null
   error: string | null,
   status: 'idle' | 'loading' | 'failed',
   connected: boolean
@@ -48,7 +52,7 @@ export const connectionsSlice = createSlice({
     connectSpotifyFailed: (state: ConnectionState) => {
       state.spotify.status = 'failed'
       state.spotify.data = null
-      state.spotify.error = 'An error occured.'
+      state.spotify.error = 'rejected'
       state.spotify.connected = false
     }
   },
@@ -62,7 +66,7 @@ export const connectionsSlice = createSlice({
       })
       .addCase(connectSpotify.fulfilled, (state, { payload }) => {
         state.spotify.status = 'idle'
-        state.spotify.data = payload
+        state.spotify.data = payload as SpotifyConnectionData
         state.spotify.error = null
         state.spotify.connected = true
       })
@@ -71,6 +75,8 @@ export const connectionsSlice = createSlice({
 })
 
 export const selectConnections = (state: RootState) => state.connections
+export const selectSpotifyAccessToken = (state: RootState) =>
+  state.connections.spotify.data?.accessToken
 export const selectSpotifyConnection = (state: RootState) => state.connections.spotify
 
 export const {

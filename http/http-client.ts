@@ -4,7 +4,7 @@ import qs from 'query-string'
 import { API_URL } from '../config'
 import { ObjectUtils } from '../utils'
 
-export const apiClient = axios.create({
+export const httpClient = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'

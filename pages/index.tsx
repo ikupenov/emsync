@@ -1,6 +1,9 @@
+import { useEffect } from 'react'
+
 import { NextPageContext } from 'next'
 import { getSession, useSession } from 'next-auth/react'
 import {
+  Box,
   Button,
   ButtonGroup,
   Text
@@ -14,6 +17,10 @@ import {
   incrementByAmount,
   selectCount
 } from '../features/counter'
+import {
+  getSpotifyPlaylists,
+  selectSpotifyPlaylists
+} from '../features/playlists'
 
 function Home() {
   const { data: session, status } = useSession()
@@ -21,10 +28,28 @@ function Home() {
   const count = useAppSelector(selectCount)
   const dispatch = useAppDispatch()
 
+  const playlists = useAppSelector(selectSpotifyPlaylists)
+
+  useEffect(() => {
+    dispatch(getSpotifyPlaylists())
+  }, [dispatch])
+
   return (
     <Page title="Dashboard">
       {status === 'authenticated' && (
         <Text>Hello, {session?.user?.name}</Text>
+      )}
+
+      {playlists.status === 'loading' && 'Loading playlists...'}
+
+      {playlists.status === 'idle' && (
+        <Box>
+          {playlists.data?.items.map(playlist => (
+            <Box key={playlist.id}>
+              {playlist.name}
+            </Box>
+          ))}
+        </Box>
       )}
 
       <Text>{count}</Text>

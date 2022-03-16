@@ -5,7 +5,7 @@ import { isArray } from 'lodash-es'
 interface CallbackQueryArgs {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback: (...args: any[]) => Promise<unknown>
-  args: unknown[] | unknown
+  args?: unknown[] | unknown
 }
 
 export const callbackBaseQuery = (): BaseQueryFn<CallbackQueryArgs, unknown, unknown> =>

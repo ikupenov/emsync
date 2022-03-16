@@ -2,16 +2,23 @@ import { v4 as uuid } from 'uuid'
 import qs from 'query-string'
 
 import {
-  SPOTIFY_BASE_URL,
+  SPOTIFY_ACCOUNTS_BASE_URL,
+  SPOTIFY_API_URL,
   SPOTIFY_ID,
   SPOTIFY_REDIRECT_URL,
   SPOTIFY_SCOPE
 } from '../../config'
-import { apiClient } from '../../http'
+import { httpClient } from '../../http'
+import {
+  SignInArgs,
+  SignInResult,
+  GetPlaylistsArgs,
+  GetPlaylistsResult
+} from './types'
 
 function authorize() {
   const url = qs.stringifyUrl({
-    url: `${SPOTIFY_BASE_URL}/authorize`,
+    url: `${SPOTIFY_ACCOUNTS_BASE_URL}/authorize`,
     query: {
       response_type: 'code',
       client_id: SPOTIFY_ID,
@@ -24,23 +31,23 @@ function authorize() {
   window.location.href = url
 }
 
-export interface SignInArgs {
-  code: string
-  state: string
-}
-
-export interface SignInResult {
-  accessToken?: string
-  expiresIn?: string
-  error?: string
-}
-
 async function signIn({ code, state }: SignInArgs): Promise<SignInResult> {
-  const response = await apiClient.post('/spotify/access-token', { code, state })
+  const response = await httpClient.post('/spotify/access-token', { code, state })
+  return response.data
+}
+
+async function getPlaylists({ accessToken }: GetPlaylistsArgs): Promise<GetPlaylistsResult> {
+  const response = await httpClient.get(`${SPOTIFY_API_URL}/v1/me/playlists`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  })
+
   return response.data
 }
 
 export const spotifyService = Object.freeze({
   authorize,
-  signIn
+  signIn,
+  getPlaylists
 })
