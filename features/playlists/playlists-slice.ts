@@ -3,26 +3,7 @@ import { isNil } from 'lodash-es'
 
 import type { RootState } from '../../app/store'
 import { getPlaylists } from '../../app/api/spotify'
-
-export interface Playlist {
-  id: string
-  name: string
-  description: string
-}
-
-interface PlaylistData {
-  items: Playlist[]
-}
-
-export interface SpotifyPlaylistsState {
-  data: PlaylistData | null,
-  error: string | null,
-  status: 'idle' | 'loading' | 'failed'
-}
-
-export interface PlaylistsState {
-  spotify: SpotifyPlaylistsState
-}
+import { PlaylistsState } from './types'
 
 const initialState: PlaylistsState = {
   spotify: {
@@ -66,7 +47,12 @@ export const playlistsSlice = createSlice({
       })
       .addCase(getSpotifyPlaylists.fulfilled, (state, { payload }) => {
         state.spotify.status = 'idle'
-        state.spotify.data = { items: payload?.items ?? [] }
+        state.spotify.data = {
+          items: payload?.items ?? [],
+          skip: payload?.offset ?? 0,
+          limit: payload?.limit ?? 50,
+          total: payload?.total ?? 0
+        }
         state.spotify.error = null
       })
       .addCase(getSpotifyPlaylists.rejected, (state) => {

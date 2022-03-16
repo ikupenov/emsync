@@ -2,21 +2,11 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import type { RootState } from '../../app/store'
 import { signIn } from '../../app/api/spotify'
-
-export interface SpotifyConnectionData {
-  accessToken: string
-}
-
-export interface SpotifyConnectionState {
-  data: SpotifyConnectionData | null
-  error: string | null,
-  status: 'idle' | 'loading' | 'failed',
-  connected: boolean
-}
-
-export interface ConnectionState {
-  spotify: SpotifyConnectionState
-}
+import {
+  ConnectionState,
+  SignInArg,
+  SpotifyConnectionData
+} from './types'
 
 const initialState: ConnectionState = {
   spotify: {
@@ -25,11 +15,6 @@ const initialState: ConnectionState = {
     status: 'idle',
     connected: false
   }
-}
-
-export interface SignInArg {
-  code: string
-  state: string
 }
 
 export const connectSpotify = createAsyncThunk(

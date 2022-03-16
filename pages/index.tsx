@@ -4,19 +4,13 @@ import { NextPageContext } from 'next'
 import { getSession, useSession } from 'next-auth/react'
 import {
   Box,
-  Button,
-  ButtonGroup,
+  Image,
+  SimpleGrid,
   Text
 } from '@chakra-ui/react'
 
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import { Page } from '../components/layouts'
-import {
-  increment,
-  decrement,
-  incrementByAmount,
-  selectCount
-} from '../features/counter'
 import {
   getSpotifyPlaylists,
   selectSpotifyPlaylists
@@ -25,7 +19,6 @@ import {
 function Home() {
   const { data: session, status } = useSession()
 
-  const count = useAppSelector(selectCount)
   const dispatch = useAppDispatch()
 
   const playlists = useAppSelector(selectSpotifyPlaylists)
@@ -43,30 +36,19 @@ function Home() {
       {playlists.status === 'loading' && 'Loading playlists...'}
 
       {playlists.status === 'idle' && (
-        <Box>
+        <SimpleGrid columns={4} spacing={8}>
           {playlists.data?.items.map(playlist => (
             <Box key={playlist.id}>
               {playlist.name}
+
+              <Image
+                src={playlist.images[0].url}
+                objectFit="cover"
+              />
             </Box>
           ))}
-        </Box>
+        </SimpleGrid>
       )}
-
-      <Text>{count}</Text>
-
-      <ButtonGroup>
-        <Button onClick={() => dispatch(increment())}>
-          Increment
-        </Button>
-
-        <Button onClick={() => dispatch(decrement())}>
-          Decrement
-        </Button>
-
-        <Button onClick={() => dispatch(incrementByAmount(5))}>
-          Increment by 5
-        </Button>
-      </ButtonGroup>
     </Page>
   )
 }
