@@ -26,7 +26,7 @@ function Home() {
     <Box>
       {status === 'authenticated' && (
         <>
-          <Text>Hello {session?.user?.name}</Text>
+          <Text>Hello, {session?.user?.name}</Text>
 
           <Button
             as={Link}

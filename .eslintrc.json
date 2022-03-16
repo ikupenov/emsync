@@ -9,7 +9,6 @@
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json",
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -25,13 +24,40 @@
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
     "next/core-web-vitals",
     "airbnb",
-    "airbnb-typescript",
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "airbnb-typescript"
+      ],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "rules": {
+        "@typescript-eslint/semi": [
+          "error",
+          "never"
+        ],
+        "@typescript-eslint/comma-dangle": [
+          "error",
+          "never"
+        ],
+        "@typescript-eslint/brace-style": [
+          "error",
+          "stroustrup"
+        ]
+      }
+    }
   ],
   "settings": {
     "react": {
@@ -81,15 +107,7 @@
       "error",
       "never"
     ],
-    "@typescript-eslint/semi": [
-      "error",
-      "never"
-    ],
     "comma-dangle": [
-      "error",
-      "never"
-    ],
-    "@typescript-eslint/comma-dangle": [
       "error",
       "never"
     ],
@@ -104,8 +122,15 @@
         "requireForBlockBody": true
       }
     ],
-    "react/require-default-props": [0],
+    "react/require-default-props": [
+      0
+    ],
     "operator-linebreak": "off",
-    "no-nested-ternary": 0
+    "no-nested-ternary": 0,
+    "quote-props": [
+      "error",
+      "consistent-as-needed"
+    ],
+    "implicit-arrow-linebreak": "off"
   }
 }
