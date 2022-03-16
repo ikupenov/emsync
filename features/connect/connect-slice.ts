@@ -6,7 +6,8 @@ import { spotifyService } from '../../services/spotify'
 export interface SpotifyConnectState {
   data: object | null
   error: string | null,
-  status: 'idle' | 'loading' | 'failed'
+  status: 'idle' | 'loading' | 'failed',
+  connected: boolean
 }
 
 export interface ConnectState {
@@ -17,7 +18,8 @@ const initialState: ConnectState = {
   spotify: {
     data: null,
     error: null,
-    status: 'idle'
+    status: 'idle',
+    connected: false
   }
 }
 
@@ -46,10 +48,12 @@ export const connectSlice = createSlice({
       .addCase(connectSpotify.fulfilled, (state, { payload }) => {
         state.spotify.status = 'idle'
         state.spotify.data = payload
+        state.spotify.connected = true
       })
       .addCase(connectSpotify.rejected, (state) => {
         state.spotify.status = 'failed'
         state.spotify.error = 'An error occured.'
+        state.spotify.connected = false
       })
   }
 })
