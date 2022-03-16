@@ -5,8 +5,12 @@ import { isNil } from 'lodash-es'
 import { useToast } from '@chakra-ui/react'
 
 import { wrapper } from '../../app/store'
-import { connectSpotify, selectSpotifyConnection } from '../../features/connect'
 import { useAppSelector } from '../../app/hooks'
+import {
+  connectSpotify,
+  connectSpotifyFailed,
+  selectSpotifyConnection
+} from '../../features/connect'
 
 export default function Callback() {
   const router = useRouter()
@@ -38,7 +42,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
     const { code, state, error: callbackError } = context.query
 
     if (!isNil(callbackError)) {
-      return { props: { error: callbackError } }
+      store.dispatch(connectSpotifyFailed())
+      return { props: {} }
     }
 
     if (isNil(code) || isNil(state)) {

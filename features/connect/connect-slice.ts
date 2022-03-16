@@ -32,14 +32,26 @@ export const connectSpotify = createAsyncThunk(
   'connect/spotify',
   async ({ code, state }: SignInArg, { dispatch }) => {
     const result = await dispatch(signIn.initiate({ code, state }))
-    return result
+
+    if ('error' in result) {
+      throw Error()
+    }
+
+    return result.data
   }
 )
 
 export const connectionsSlice = createSlice({
   name: 'connections',
   initialState,
-  reducers: {},
+  reducers: {
+    connectSpotifyFailed: (state: ConnectionState) => {
+      state.spotify.status = 'failed'
+      state.spotify.data = null
+      state.spotify.error = 'An error occured.'
+      state.spotify.connected = false
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(connectSpotify.pending, (state) => {
@@ -50,15 +62,15 @@ export const connectionsSlice = createSlice({
         state.spotify.data = payload
         state.spotify.connected = true
       })
-      .addCase(connectSpotify.rejected, (state) => {
-        state.spotify.status = 'failed'
-        state.spotify.error = 'An error occured.'
-        state.spotify.connected = false
-      })
+      .addCase(connectSpotify.rejected, connectionsSlice.caseReducers.connectSpotifyFailed)
   }
 })
 
 export const selectConnections = (state: RootState) => state.connections
 export const selectSpotifyConnection = (state: RootState) => state.connections.spotify
+
+export const {
+  connectSpotifyFailed
+} = connectionsSlice.actions
 
 export const connectionsReducer = connectionsSlice.reducer

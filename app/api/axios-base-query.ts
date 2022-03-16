@@ -2,19 +2,19 @@ import { BaseQueryFn } from '@reduxjs/toolkit/query/react'
 import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 import { isString } from 'lodash-es'
 
-interface BaseQueryArgs {
+interface AxiosQueryArgs {
   url: string
   method: AxiosRequestConfig['method']
   data?: AxiosRequestConfig['data']
 }
 
-interface BaseQueryProps {
+interface AxiosQueryProps {
   baseUrl: string
 }
 
 export const axiosBaseQuery = (
-  { baseUrl }: BaseQueryProps = { baseUrl: '' }
-): BaseQueryFn<BaseQueryArgs | string, unknown, unknown> =>
+  { baseUrl }: AxiosQueryProps = { baseUrl: '' }
+): BaseQueryFn<AxiosQueryArgs | string, unknown, unknown> =>
   async (args) => {
     const { url = args, method = 'GET', data = null } = isString(args) ? {} : args
 
@@ -25,7 +25,10 @@ export const axiosBaseQuery = (
     catch (axiosError) {
       const err = axiosError as AxiosError
       return {
-        error: { status: err.response?.status, data: err.response?.data }
+        error: {
+          status: err.response?.status,
+          data: err.response?.data
+        }
       }
     }
   }
