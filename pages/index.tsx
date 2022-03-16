@@ -36,11 +36,9 @@ function Home() {
       {playlists.status === 'loading' && 'Loading playlists...'}
 
       {playlists.status === 'idle' && (
-        <SimpleGrid columns={4} spacing={8}>
+        <SimpleGrid columns={4} spacing={8} autoRows="1fr">
           {playlists.data?.items.map(playlist => (
             <Box key={playlist.id}>
-              {playlist.name}
-
               <Image
                 src={playlist.images[0].url}
                 objectFit="cover"
@@ -50,6 +48,13 @@ function Home() {
                   filter: 'none',
                   transform: 'scale(1.1)'
                 }}
+              />
+
+              <Text isTruncated>{playlist.name}</Text>
+
+              <Text
+                noOfLines={2}
+                dangerouslySetInnerHTML={{ __html: playlist.description }}
               />
             </Box>
           ))}
