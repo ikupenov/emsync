@@ -37,7 +37,7 @@ const hydratedReducer = (
 }
 
 const persistedReducer = persistReducer(
-  { key: 'emsync', storage },
+  { key: 'emsync', storage, blacklist: [spotifyApi.reducerPath] },
   hydratedReducer as Reducer<ReturnType<typeof combinedReducer>>
 )
 
