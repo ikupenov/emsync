@@ -4,19 +4,19 @@ import { useRouter } from 'next/router'
 import { isNil } from 'lodash-es'
 import { useToast } from '@chakra-ui/react'
 
-import { SignInResult } from '../../services'
 import { wrapper } from '../../app/store'
-import { connectSpotify } from '../../features/connect'
+import { connectSpotify, selectSpotifyConnection } from '../../features/connect'
+import { useAppSelector } from '../../app/hooks'
 
-interface CallbackProps {
-  error: string
-}
-
-export default function Callback({ error }: CallbackProps) {
+export default function Callback() {
   const router = useRouter()
   const toast = useToast()
 
+  const { status, error } = useAppSelector(selectSpotifyConnection)
+
   useEffect(() => {
+    if (status === 'loading') return
+
     if (error) {
       toast({
         title: 'We could not connect to your Spotify account.',
@@ -25,10 +25,10 @@ export default function Callback({ error }: CallbackProps) {
         duration: 3000,
         isClosable: true
       })
-
-      router.push('/connect')
     }
-  }, [toast, router, error])
+
+    router.push('/connect')
+  }, [router, toast, status, error])
 
   return null
 }
@@ -50,21 +50,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
       }
     }
 
-    const { payload } = await store.dispatch(
+    await store.dispatch(
       connectSpotify({ code: code as string, state: state as string })
     )
 
-    const { accessToken, error: serverError } = payload as SignInResult
-
-    if (!isNil(serverError)) {
-      return { props: { error: serverError } }
-    }
-
-    return {
-      redirect: {
-        destination: isNil(accessToken) ? '/connect' : '/',
-        permanent: false
-      }
-    }
+    return { props: {} }
   }
 )

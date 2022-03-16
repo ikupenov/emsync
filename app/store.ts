@@ -10,12 +10,12 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper'
 import { persistReducer, persistStore } from 'redux-persist'
 
 import { storage } from './storage'
-import { counterReducer } from '../features/counter'
-import { connectReducer } from '../features/connect'
+import { counterSlice, counterReducer } from '../features/counter'
+import { connectionsSlice, connectionsReducer } from '../features/connect'
 
 const combinedReducer = combineReducers({
-  counter: counterReducer,
-  connect: connectReducer
+  [counterSlice.name]: counterReducer,
+  [connectionsSlice.name]: connectionsReducer
 })
 
 const hydratedReducer = (
@@ -54,4 +54,4 @@ export type AppDispatch = Store['dispatch']
 export type AppThunk<ReturnType = void> =
   ThunkAction<ReturnType, RootState, unknown, Action<string>>
 
-export const wrapper = createWrapper(makeStore, { debug: true })
+export const wrapper = createWrapper<Store>(makeStore, { debug: true })

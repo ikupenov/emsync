@@ -3,18 +3,18 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '../../app/store'
 import { spotifyService } from '../../services/spotify'
 
-export interface SpotifyConnectState {
+export interface SpotifyConnectionState {
   data: object | null
   error: string | null,
   status: 'idle' | 'loading' | 'failed',
   connected: boolean
 }
 
-export interface ConnectState {
-  spotify: SpotifyConnectState
+export interface ConnectionState {
+  spotify: SpotifyConnectionState
 }
 
-const initialState: ConnectState = {
+const initialState: ConnectionState = {
   spotify: {
     data: null,
     error: null,
@@ -36,8 +36,8 @@ export const connectSpotify = createAsyncThunk(
   }
 )
 
-export const connectSlice = createSlice({
-  name: 'connect',
+export const connectionsSlice = createSlice({
+  name: 'connections',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -58,6 +58,7 @@ export const connectSlice = createSlice({
   }
 })
 
-export const selectConnect = (state: RootState) => state.connect
+export const selectConnections = (state: RootState) => state.connections
+export const selectSpotifyConnection = (state: RootState) => state.connections.spotify
 
-export const connectReducer = connectSlice.reducer
+export const connectionsReducer = connectionsSlice.reducer
