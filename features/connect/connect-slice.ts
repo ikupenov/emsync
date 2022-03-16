@@ -26,8 +26,8 @@ export interface SignInArg {
   state: string
 }
 
-export const signInSpotify = createAsyncThunk(
-  'connect/spotify/signIn',
+export const connectSpotify = createAsyncThunk(
+  'connect/spotify',
   async ({ code, state }: SignInArg) => {
     const result = await spotifyService.signIn(code, state)
     return result
@@ -40,14 +40,14 @@ export const connectSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(signInSpotify.pending, (state) => {
+      .addCase(connectSpotify.pending, (state) => {
         state.spotify.status = 'loading'
       })
-      .addCase(signInSpotify.fulfilled, (state, { payload }) => {
+      .addCase(connectSpotify.fulfilled, (state, { payload }) => {
         state.spotify.status = 'idle'
         state.spotify.data = payload
       })
-      .addCase(signInSpotify.rejected, (state) => {
+      .addCase(connectSpotify.rejected, (state) => {
         state.spotify.status = 'failed'
         state.spotify.error = 'An error occured.'
       })
