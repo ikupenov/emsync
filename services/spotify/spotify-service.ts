@@ -24,13 +24,18 @@ function authorize() {
   window.location.href = url
 }
 
+export interface SignInArgs {
+  code: string
+  state: string
+}
+
 export interface SignInResult {
   accessToken?: string
   expiresIn?: string
   error?: string
 }
 
-async function signIn(code: string, state: string): Promise<SignInResult> {
+async function signIn({ code, state }: SignInArgs): Promise<SignInResult> {
   const response = await apiClient.post('/spotify/access-token', { code, state })
   return response.data
 }

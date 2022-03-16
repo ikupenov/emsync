@@ -31,7 +31,7 @@ export interface SignInArg {
 export const connectSpotify = createAsyncThunk(
   'connect/spotify',
   async ({ code, state }: SignInArg) => {
-    const result = await spotifyService.signIn(code, state)
+    const result = await spotifyService.signIn({ code, state })
     return result
   }
 )

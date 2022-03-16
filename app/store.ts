@@ -10,10 +10,13 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper'
 import { persistReducer, persistStore } from 'redux-persist'
 
 import { storage } from './storage'
+import { spotifyApi } from './services/spotify'
 import { counterSlice, counterReducer } from '../features/counter'
 import { connectionsSlice, connectionsReducer } from '../features/connect'
 
 const combinedReducer = combineReducers({
+  [spotifyApi.reducerPath]: spotifyApi.reducer,
+
   [counterSlice.name]: counterReducer,
   [connectionsSlice.name]: connectionsReducer
 })
@@ -38,9 +41,12 @@ const persistedReducer = persistReducer(
 
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: getDefaultMiddleware => getDefaultMiddleware({
-    serializableCheck: false
-  })
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false
+    }).concat(
+      spotifyApi.middleware
+    )
 })
 
 export const persistor = persistStore(store)
@@ -54,4 +60,4 @@ export type AppDispatch = Store['dispatch']
 export type AppThunk<ReturnType = void> =
   ThunkAction<ReturnType, RootState, unknown, Action<string>>
 
-export const wrapper = createWrapper<Store>(makeStore, { debug: true })
+export const wrapper = createWrapper<Store>(makeStore)
