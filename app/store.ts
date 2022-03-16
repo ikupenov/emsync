@@ -1,16 +1,45 @@
-import { configureStore, Action, ThunkAction } from '@reduxjs/toolkit'
+import {
+  configureStore,
+  combineReducers,
+  Action,
+  ThunkAction,
+  AnyAction,
+  Reducer
+} from '@reduxjs/toolkit'
+import { createWrapper, HYDRATE } from 'next-redux-wrapper'
 
-import { counterSlice, counterReducer } from '../features/counter'
-import { connectSlice, connectReducer } from '../features/connect'
+import { counterReducer } from '../features/counter'
+import { connectReducer } from '../features/connect'
 
-export const store = configureStore({
-  reducer: {
-    [counterSlice.name]: counterReducer,
-    [connectSlice.name]: connectReducer
-  }
+const combinedReducer = combineReducers({
+  counter: counterReducer,
+  connect: connectReducer
 })
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+const reducer = (
+  state: ReturnType<typeof combinedReducer>,
+  action: AnyAction
+) => {
+  if (action.type === HYDRATE) {
+    const nextState = {
+      ...state, // use previous state
+      ...action.payload // apply delta from hydration
+    }
+
+    return nextState
+  }
+
+  return combinedReducer(state, action)
+}
+
+export const makeStore = () =>
+  configureStore({ reducer: reducer as Reducer<ReturnType<typeof combinedReducer>> })
+
+type Store = ReturnType<typeof makeStore>
+
+export type RootState = ReturnType<Store['getState']>
+export type AppDispatch = Store['dispatch']
 export type AppThunk<ReturnType = void> =
   ThunkAction<ReturnType, RootState, unknown, Action<string>>
+
+export const wrapper = createWrapper(makeStore, { debug: true })
