@@ -7,7 +7,9 @@ import {
   Reducer
 } from '@reduxjs/toolkit'
 import { createWrapper, HYDRATE } from 'next-redux-wrapper'
+import { persistReducer, persistStore } from 'redux-persist'
 
+import { storage } from './storage'
 import { counterReducer } from '../features/counter'
 import { connectReducer } from '../features/connect'
 
@@ -16,24 +18,34 @@ const combinedReducer = combineReducers({
   connect: connectReducer
 })
 
-const reducer = (
+const hydratedReducer = (
   state: ReturnType<typeof combinedReducer>,
   action: AnyAction
 ) => {
   if (action.type === HYDRATE) {
-    const nextState = {
-      ...state, // use previous state
-      ...action.payload // apply delta from hydration
-    }
-
+    // use previous state and apply delta from hydration
+    const nextState = { ...state, ...action.payload }
     return nextState
   }
 
   return combinedReducer(state, action)
 }
 
-export const makeStore = () =>
-  configureStore({ reducer: reducer as Reducer<ReturnType<typeof combinedReducer>> })
+const persistedReducer = persistReducer(
+  { key: 'emsync', storage },
+  hydratedReducer as Reducer<ReturnType<typeof combinedReducer>>
+)
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: getDefaultMiddleware => getDefaultMiddleware({
+    serializableCheck: false
+  })
+})
+
+export const persistor = persistStore(store)
+
+export const makeStore = () => store
 
 type Store = ReturnType<typeof makeStore>
 
