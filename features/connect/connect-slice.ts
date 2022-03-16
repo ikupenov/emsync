@@ -5,8 +5,8 @@ import { spotifyService } from '../../services/spotify'
 
 export interface SpotifyConnectState {
   data: object | null
-  pending: boolean | null
-  error: string | null
+  error: string | null,
+  status: 'idle' | 'loading' | 'failed'
 }
 
 export interface ConnectState {
@@ -16,8 +16,8 @@ export interface ConnectState {
 const initialState: ConnectState = {
   spotify: {
     data: null,
-    pending: false,
-    error: null
+    error: null,
+    status: 'idle'
   }
 }
 
@@ -41,14 +41,14 @@ export const connectSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(signInSpotify.pending, (state) => {
-        state.spotify.pending = true
+        state.spotify.status = 'loading'
       })
       .addCase(signInSpotify.fulfilled, (state, { payload }) => {
-        state.spotify.pending = false
+        state.spotify.status = 'idle'
         state.spotify.data = payload
       })
       .addCase(signInSpotify.rejected, (state) => {
-        state.spotify.pending = false
+        state.spotify.status = 'failed'
         state.spotify.error = 'An error occured.'
       })
   }
