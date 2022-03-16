@@ -1,13 +1,14 @@
-import { Box, Button } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 
-import { authorize } from '../../services/spotify'
+import { Page } from '../../components/layouts'
+import { spotifyService } from '../../services'
 
 export default function Connect() {
   return (
-    <Box>
-      <Button onClick={() => authorize()}>
+    <Page title="Connect providers">
+      <Button onClick={() => spotifyService.authorize()}>
         Connect to Spotify
       </Button>
-    </Box>
+    </Page>
   )
 }
