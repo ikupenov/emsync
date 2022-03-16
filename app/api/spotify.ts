@@ -16,4 +16,5 @@ export const spotifyApi = createApi({
   })
 })
 
+export const { signIn } = spotifyApi.endpoints
 export const { useSignInMutation } = spotifyApi

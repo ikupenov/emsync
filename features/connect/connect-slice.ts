@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import type { RootState } from '../../app/store'
-import { spotifyService } from '../../services/spotify'
+import { signIn } from '../../app/api/spotify'
 
 export interface SpotifyConnectionState {
   data: object | null
@@ -30,8 +30,8 @@ export interface SignInArg {
 
 export const connectSpotify = createAsyncThunk(
   'connect/spotify',
-  async ({ code, state }: SignInArg) => {
-    const result = await spotifyService.signIn({ code, state })
+  async ({ code, state }: SignInArg, { dispatch }) => {
+    const result = await dispatch(signIn.initiate({ code, state }))
     return result
   }
 )
