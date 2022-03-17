@@ -49,8 +49,7 @@ export const callbackQuery = ({
     },
     { getState, dispatch }
   ) => {
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    let response: QueryReturnValue<unknown, unknown, {}>
+    let response: QueryReturnValue<unknown, unknown, CallbackQueryFnMeta>
 
     try {
       await requestQueryInterceptor?.(
