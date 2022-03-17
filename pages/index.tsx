@@ -36,18 +36,29 @@ function Home() {
       {playlists.status === 'loading' && 'Loading playlists...'}
 
       {playlists.status === 'idle' && (
-        <SimpleGrid columns={4} spacing={8} autoRows="1fr">
+        <SimpleGrid columns={3} spacing={8} autoRows="1fr">
           {playlists.data?.items.map(playlist => (
-            <Box key={playlist.id}>
+            <Box
+              key={playlist.id}
+              bgColor="gray.700"
+              p={4}
+              borderRadius="md"
+              filter="grayscale()"
+              transition="
+                filter var(--emsync-transition-duration-fast) var(--emsync-transition-easing-ease-in-out),
+                transform var(--emsync-transition-duration-fast) var(--emsync-transition-easing-ease-in-out)
+              "
+              _hover={{
+                filter: 'none',
+                transform: 'scale(1.1)'
+              }}
+            >
               <Image
                 src={playlist.images[0].url}
                 objectFit="cover"
-                filter="grayscale()"
-                transition="filter 0.15s ease, transform 0.15s ease"
-                _hover={{
-                  filter: 'none',
-                  transform: 'scale(1.1)'
-                }}
+                borderRadius="md"
+                boxShadow="xl"
+                mb={4}
               />
 
               <Text isTruncated>{playlist.name}</Text>
@@ -55,6 +66,8 @@ function Home() {
               <Text
                 noOfLines={2}
                 dangerouslySetInnerHTML={{ __html: playlist.description }}
+                fontSize="sm"
+                color="gray.300"
               />
             </Box>
           ))}
