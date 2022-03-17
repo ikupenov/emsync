@@ -4,6 +4,7 @@ import { NextPageContext } from 'next'
 import { getSession, useSession } from 'next-auth/react'
 import {
   Box,
+  Heading,
   Image,
   SimpleGrid,
   Text
@@ -30,27 +31,27 @@ function Home() {
   return (
     <Page title="Dashboard">
       {status === 'authenticated' && (
-        <Text>Hello, {session?.user?.name}</Text>
+        <Heading mb={8}>Hello, {session?.user?.name}</Heading>
       )}
 
       {playlists.status === 'loading' && 'Loading playlists...'}
 
       {playlists.status === 'idle' && (
-        <SimpleGrid columns={3} spacing={8} autoRows="1fr">
+        <SimpleGrid columns={[1, 1, 3]} spacing={8} autoRows="1fr">
           {playlists.data?.items.map(playlist => (
             <Box
               key={playlist.id}
               bgColor="gray.700"
               p={4}
               borderRadius="md"
-              filter="grayscale()"
+              filter="grayscale(100%)"
               transition="
                 filter var(--emsync-transition-duration-fast) var(--emsync-transition-easing-ease-in-out),
                 transform var(--emsync-transition-duration-fast) var(--emsync-transition-easing-ease-in-out)
               "
               _hover={{
                 filter: 'none',
-                transform: 'scale(1.1)'
+                transform: 'scale(1.05)'
               }}
             >
               <Image
