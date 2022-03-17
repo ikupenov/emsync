@@ -12,7 +12,7 @@ interface AxiosQueryProps {
   baseUrl: string
 }
 
-export const axiosBaseQuery = (
+export const axiosQuery = (
   { baseUrl }: AxiosQueryProps = { baseUrl: '' }
 ): BaseQueryFn<AxiosQueryArgs | string, unknown, unknown> =>
   async (args) => {
