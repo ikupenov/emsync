@@ -1,16 +1,22 @@
-export interface SignInArgs {
+export interface ConnectArgs {
   code: string
   state: string
 }
 
-export interface SignInResult {
+export interface ConnectResult {
   accessToken?: string
+  refreshToken?: string
   expiresIn?: string
   error?: string
 }
 
-export interface GetPlaylistsArgs {
-  accessToken: string
+export interface ReconnectArgs {
+  refreshToken: string
+}
+
+export interface ReconnectResult {
+  accessToken?: string
+  expiresIn?: string
 }
 
 export interface PlaylistImage {

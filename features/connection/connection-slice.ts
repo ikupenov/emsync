@@ -1,12 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { isNil } from 'lodash-es'
 
 import type { RootState } from '../../app/store'
-import { signIn } from '../../app/api/spotify'
-import {
-  ConnectionState,
-  SignInArg,
-  SpotifyConnectionData
-} from './types'
+import { connect, reconnect } from '../../app/api/spotify-api'
+import { ConnectionState, SignInArg } from './types'
 
 const initialState: ConnectionState = {
   spotify: {
@@ -20,7 +17,27 @@ const initialState: ConnectionState = {
 export const connectSpotify = createAsyncThunk(
   'connect/spotify',
   async ({ code, state }: SignInArg, { dispatch }) => {
-    const result = await dispatch(signIn.initiate({ code, state }))
+    const result = await dispatch(connect.initiate({ code, state }))
+
+    if ('error' in result) {
+      throw Error()
+    }
+
+    return result.data
+  }
+)
+
+export const reconnectSpotify = createAsyncThunk(
+  'reconnect/spotify',
+  async (_, { getState, dispatch }) => {
+    const state = getState() as RootState
+    const refreshToken = state.connections.spotify.data?.refreshToken
+
+    if (isNil(refreshToken)) {
+      throw Error()
+    }
+
+    const result = await dispatch(reconnect.initiate({ refreshToken }))
 
     if ('error' in result) {
       throw Error()
@@ -34,6 +51,18 @@ export const connectionsSlice = createSlice({
   name: 'connections',
   initialState,
   reducers: {
+    connectSpotifyPending: (state) => {
+      state.spotify.status = 'loading'
+      state.spotify.data = null
+      state.spotify.error = null
+      state.spotify.connected = false
+    },
+    connectSpotifyFulfilled: (state, { payload }) => {
+      state.spotify.status = 'idle'
+      state.spotify.data = { ...state.spotify.data, ...payload }
+      state.spotify.error = null
+      state.spotify.connected = true
+    },
     connectSpotifyFailed: (state: ConnectionState) => {
       state.spotify.status = 'failed'
       state.spotify.data = null
@@ -43,19 +72,12 @@ export const connectionsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(connectSpotify.pending, (state) => {
-        state.spotify.status = 'loading'
-        state.spotify.data = null
-        state.spotify.error = null
-        state.spotify.connected = false
-      })
-      .addCase(connectSpotify.fulfilled, (state, { payload }) => {
-        state.spotify.status = 'idle'
-        state.spotify.data = payload as SpotifyConnectionData
-        state.spotify.error = null
-        state.spotify.connected = true
-      })
+      .addCase(connectSpotify.pending, connectionsSlice.caseReducers.connectSpotifyPending)
+      .addCase(connectSpotify.fulfilled, connectionsSlice.caseReducers.connectSpotifyFulfilled)
       .addCase(connectSpotify.rejected, connectionsSlice.caseReducers.connectSpotifyFailed)
+
+      .addCase(reconnectSpotify.fulfilled, connectionsSlice.caseReducers.connectSpotifyFulfilled)
+      .addCase(reconnectSpotify.rejected, connectionsSlice.caseReducers.connectSpotifyFailed)
   }
 })
 
@@ -65,6 +87,8 @@ export const selectSpotifyAccessToken = (state: RootState) =>
 export const selectSpotifyConnection = (state: RootState) => state.connections.spotify
 
 export const {
+  connectSpotifyPending,
+  connectSpotifyFulfilled,
   connectSpotifyFailed
 } = connectionsSlice.actions
 

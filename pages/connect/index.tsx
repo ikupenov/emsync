@@ -1,11 +1,12 @@
 import { Button } from '@chakra-ui/react'
 
 import { Page } from '../../components/layouts'
-import { useAppSelector } from '../../app/hooks'
+import { useAppSelector, useAppDispatch } from '../../app/hooks'
 import { spotifyService } from '../../services'
-import { selectSpotifyConnection } from '../../features/connection'
+import { reconnectSpotify, selectSpotifyConnection } from '../../features/connection'
 
 export default function Connect() {
+  const dispatch = useAppDispatch()
   const spotifyConnection = useAppSelector(selectSpotifyConnection)
 
   return (
@@ -13,7 +14,10 @@ export default function Connect() {
       <Button
         variant="outline"
         colorScheme={spotifyConnection.connected ? 'green' : 'gray'}
-        onClick={() => spotifyService.authorize()}
+        onClick={() => spotifyConnection.connected ?
+          dispatch(reconnectSpotify()) :
+          spotifyService.authorize()
+        }
       >
         {spotifyConnection.connected ? 'Connected to Spotify' : 'Connect to Spotify'}
       </Button>

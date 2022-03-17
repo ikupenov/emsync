@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    API_URL: process.env.API_ENDPOINT,
+    API_URL: process.env.API_URL,
     SPOTIFY_API_URL: process.env.SPOTIFY_API_URL,
     SPOTIFY_ACCOUNTS_BASE_URL: process.env.SPOTIFY_ACCOUNTS_BASE_URL,
     SPOTIFY_ACCOUNTS_API_URL: process.env.SPOTIFY_ACCOUNTS_API_URL,

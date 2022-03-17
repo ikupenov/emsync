@@ -14,19 +14,34 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { code, state } = req.body
+  const { code, state, refreshToken } = req.body
 
-  if (isNil(state)) {
+  if (!isNil(code) && isNil(state)) {
     res.status(400).json({ error: 'invalid_state' })
   }
   else {
     const credentials = Buffer.from(`${SPOTIFY_ID}:${SPOTIFY_SECRET}`).toString('base64')
 
-    const data = qs.stringify({
-      code,
-      redirect_uri: SPOTIFY_REDIRECT_URL,
-      grant_type: 'authorization_code'
-    })
+    let data = null
+
+    if (!isNil(code)) {
+      data = qs.stringify({
+        code,
+        redirect_uri: SPOTIFY_REDIRECT_URL,
+        grant_type: 'authorization_code'
+      })
+    }
+    else if (!isNil(refreshToken)) {
+      data = qs.stringify({
+        refresh_token: refreshToken,
+        redirect_uri: SPOTIFY_REDIRECT_URL,
+        grant_type: 'refresh_token'
+      })
+    }
+    else {
+      res.status(400).json({ error: 'invalid_body' })
+      return
+    }
 
     const options = {
       headers: {
@@ -44,10 +59,15 @@ export default async function handler(
 
       const {
         access_token: accessToken,
+        refresh_token: refreshTokenResponse,
         expires_in: expiresIn
       } = responseData
 
-      res.status(200).json({ accessToken, expiresIn })
+      res.status(200).json({
+        accessToken,
+        refreshToken: refreshTokenResponse,
+        expiresIn
+      })
     }
     catch (responseError) {
       res.status(400).json({ error: responseError })

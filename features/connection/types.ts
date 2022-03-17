@@ -1,5 +1,6 @@
 export interface SpotifyConnectionData {
   accessToken: string
+  refreshToken: string
 }
 
 export interface SpotifyConnectionState {

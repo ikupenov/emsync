@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { isNil } from 'lodash-es'
 
 import type { RootState } from '../../app/store'
-import { getPlaylists } from '../../app/api/spotify'
+import { getPlaylists } from '../../app/api/spotify-api'
 import { PlaylistsState } from './types'
 
 const initialState: PlaylistsState = {
@@ -24,7 +24,7 @@ export const getSpotifyPlaylists = createAsyncThunk(
       throw Error()
     }
 
-    const result = await dispatch(getPlaylists.initiate({ accessToken }))
+    const result = await dispatch(getPlaylists.initiate())
 
     if ('error' in result) {
       throw Error()

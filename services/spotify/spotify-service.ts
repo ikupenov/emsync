@@ -1,6 +1,13 @@
 import { v4 as uuid } from 'uuid'
 import qs from 'query-string'
+import axios, { AxiosError } from 'axios'
+import { isNil } from 'lodash-es'
 
+import { store } from '../../app/store'
+import {
+  reconnectSpotify,
+  selectSpotifyConnection
+} from '../../features/connection'
 import {
   SPOTIFY_ACCOUNTS_BASE_URL,
   SPOTIFY_API_URL,
@@ -8,13 +15,58 @@ import {
   SPOTIFY_REDIRECT_URL,
   SPOTIFY_SCOPE
 } from '../../config'
-import { httpClient } from '../../http'
+import { httpClient, HttpStatusCode } from '../../http'
 import {
-  SignInArgs,
-  SignInResult,
-  GetPlaylistsArgs,
+  ConnectArgs,
+  ConnectResult,
+  ReconnectArgs,
+  ReconnectResult,
   GetPlaylistsResult
 } from './types'
+
+const spotifyClient = axios.create({
+  baseURL: SPOTIFY_API_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+spotifyClient.interceptors.request.use(
+  async (request) => {
+    const state = store.getState()
+    const connection = selectSpotifyConnection(state)
+    const accessToken = connection.data?.accessToken
+
+    if (isNil(accessToken)) {
+      return Promise.reject()
+    }
+
+    request.headers = {
+      ...request.headers,
+      Authorization: `Bearer ${accessToken}`
+    }
+
+    return Promise.resolve(request)
+  }
+)
+
+spotifyClient.interceptors.response.use(
+  response => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config
+
+    if (
+      error.response?.status === HttpStatusCode.Unathorized &&
+      !originalRequest.hasRetried
+    ) {
+      originalRequest.hasRetried = true
+      await store.dispatch(reconnectSpotify())
+      return spotifyClient(originalRequest)
+    }
+
+    return Promise.reject(error)
+  }
+)
 
 function authorize() {
   const url = qs.stringifyUrl({
@@ -31,23 +83,30 @@ function authorize() {
   window.location.href = url
 }
 
-async function signIn({ code, state }: SignInArgs): Promise<SignInResult> {
-  const response = await httpClient.post('/spotify/access-token', { code, state })
+async function connect({ code, state }: ConnectArgs): Promise<ConnectResult> {
+  const response = await httpClient.post<ConnectResult>(
+    '/spotify/access-token',
+    { code, state }
+  )
   return response.data
 }
 
-async function getPlaylists({ accessToken }: GetPlaylistsArgs): Promise<GetPlaylistsResult> {
-  const response = await httpClient.get(`${SPOTIFY_API_URL}/v1/me/playlists`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  })
+async function reconnect({ refreshToken }: ReconnectArgs): Promise<ReconnectResult> {
+  const response = await httpClient.post<ReconnectResult>(
+    '/spotify/access-token',
+    { refreshToken }
+  )
+  return response.data
+}
 
+async function getPlaylists(): Promise<GetPlaylistsResult> {
+  const response = await spotifyClient.get('/v1/me/playlists')
   return response.data
 }
 
 export const spotifyService = Object.freeze({
   authorize,
-  signIn,
+  connect,
+  reconnect,
   getPlaylists
 })

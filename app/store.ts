@@ -10,7 +10,7 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper'
 import { persistReducer, persistStore } from 'redux-persist'
 
 import { storage } from './storage'
-import { spotifyApi } from './api/spotify'
+import { spotifyApi } from './api/spotify-api'
 import { connectionsSlice, connectionsReducer } from '../features/connection'
 import { playlistsSlice, playlistsReducer } from '../features/playlists'
 
