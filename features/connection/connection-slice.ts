@@ -15,7 +15,7 @@ const initialState: ConnectionState = {
 }
 
 export const connectSpotify = createAsyncThunk(
-  'connect/spotify',
+  'connections/connectSpotify',
   async ({ code, state }: SignInArg, { dispatch }) => {
     const result = await dispatch(connect.initiate({ code, state }))
 
@@ -28,7 +28,7 @@ export const connectSpotify = createAsyncThunk(
 )
 
 export const reconnectSpotify = createAsyncThunk(
-  'reconnect/spotify',
+  'connections/reconnectSpotify',
   async (_, { getState, dispatch }) => {
     const state = getState() as RootState
     const refreshToken = state.connections.spotify.data?.refreshToken
