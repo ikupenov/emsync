@@ -1,22 +1,27 @@
+/* eslint-disable @typescript-eslint/indent */
 import type { BaseQueryFn } from '@reduxjs/toolkit/query/react'
 import type { AxiosError } from 'axios'
 import { isArray } from 'lodash-es'
 
 import { BaseQueryApi, QueryReturnValue } from './types'
 
-type RequestInterceptor = (args: CallbackQueryArgs, api: BaseQueryApi) => Promise<void>
-type ResponseInterceptor = (
+export type RequestInterceptor = (args: CallbackQueryArgs, api: BaseQueryApi) => Promise<void>
+export type ResponseInterceptor = (
   response: QueryReturnValue,
   args: CallbackQueryArgs,
   api: BaseQueryApi
 ) => Promise<void>
 
-interface CallbackQueryFnArgs {
+export interface CallbackQueryFnArgs {
   requestQueryInterceptor?: RequestInterceptor
   responseQueryInterceptor?: ResponseInterceptor
 }
 
-interface CallbackQueryArgs {
+export interface CallbackQueryFnMeta {
+  retried?: boolean
+}
+
+export interface CallbackQueryArgs {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback: (...args: any[]) => Promise<unknown>
   args?: unknown[] | unknown
@@ -27,7 +32,14 @@ interface CallbackQueryArgs {
 export const callbackQuery = ({
   requestQueryInterceptor,
   responseQueryInterceptor
-}: CallbackQueryFnArgs = {}): BaseQueryFn<CallbackQueryArgs, unknown, unknown> =>
+}: CallbackQueryFnArgs = {}): BaseQueryFn<
+  CallbackQueryArgs,
+  unknown,
+  unknown,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  {},
+  CallbackQueryFnMeta
+> =>
   async (
     {
       callback,

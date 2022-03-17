@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { isNil } from 'lodash-es'
 
-import { callbackQuery } from './callback-base-query'
+import { callbackQuery, CallbackQueryFnMeta } from './callback-base-query'
 import { ReconnectArgs } from '../../services/spotify/types'
 import {
   spotifyService,
@@ -61,7 +61,14 @@ export const spotifyApi = createApi({
           const connection = state.connections.spotify
           const refreshToken = connection.data?.refreshToken
 
-          if ('error' in response && !isNil(refreshToken)) {
+          const hasRetried = (response.meta as CallbackQueryFnMeta).retried
+
+          if (
+            !hasRetried &&
+            'error' in response &&
+            !isNil(refreshToken)
+          ) {
+            (response.meta as CallbackQueryFnMeta).retried = true
             await dispatch(spotifyApi.endpoints.reconnect.initiate({ refreshToken }))
             const { callback, args: callbackArgs } = args
             await callback(callbackArgs)
