@@ -62,7 +62,8 @@ export const spotifyApi = createApi({
           const connection = state.connections.spotify
           const refreshToken = connection.data?.refreshToken
 
-          const hasRetried = (response.meta as CallbackQueryFnMeta).retried
+          response.meta = response.meta ?? {}
+          const hasRetried = (response.meta as CallbackQueryFnMeta).retried ?? false
 
           if (
             !hasRetried &&
