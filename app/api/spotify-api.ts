@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 
 import { callbackBaseQuery } from './callback-base-query'
-import { ReconnectArgs } from '../../services/spotify/types';
+import { ReconnectArgs } from '../../services/spotify/types'
 import {
   spotifyService,
   ConnectArgs,
