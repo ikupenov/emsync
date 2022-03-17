@@ -41,6 +41,7 @@ export const spotifyApi = createApi({
             throw Error('unauthorized')
           }
 
+          // TODO: We should not add interceptors here
           spotifyClient.interceptors.request.use(
             async (request) => {
               request.headers = {
