@@ -36,6 +36,9 @@ const hydratedReducer = (
   action: AnyAction
 ) => {
   if (action.type === HYDRATE) {
+    if (action.payload.app === 'init') delete action.payload.app
+    if (action.payload.page === 'init') delete action.payload.page
+
     // use previous state and apply delta from hydration
     const nextState = { ...state, ...action.payload }
     return nextState
