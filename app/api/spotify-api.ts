@@ -1,11 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { isNil } from 'lodash-es'
 
-import { callbackQuery, CallbackQueryFnMeta } from './callback-base-query'
+import { callbackQuery } from './callback-base-query'
 import { ReconnectArgs } from '../../services/spotify/types'
 import {
   spotifyService,
-  spotifyClient,
   ConnectArgs,
   ConnectResult,
   GetPlaylistsResult
@@ -29,55 +27,7 @@ export const spotifyApi = createApi({
     }),
     getPlaylists: builder.query<GetPlaylistsResult, void>({
       query: () => ({
-        callback: spotifyService.getPlaylists,
-        requestEndpointInterceptor: async (_, api) => {
-          const { getState } = api
-
-          const state = getState()
-          const connection = state.connections.spotify
-          const accessToken = connection.data?.accessToken
-
-          if (isNil(accessToken)) {
-            throw Error('unauthorized')
-          }
-
-          // TODO: We should not add interceptors here
-          spotifyClient.interceptors.request.use(
-            async (request) => {
-              request.headers = {
-                ...request.headers,
-                Authorization: `Bearer ${accessToken}`
-              }
-
-              return Promise.resolve(request)
-            }
-          )
-
-          return Promise.resolve()
-        },
-        responseEndpointInterceptor: async (response, args, api) => {
-          const { getState, dispatch } = api
-
-          const state = getState()
-          const connection = state.connections.spotify
-          const refreshToken = connection.data?.refreshToken
-
-          response.meta = response.meta ?? {}
-          const hasRetried = (response.meta as CallbackQueryFnMeta).retried ?? false
-
-          if (
-            !hasRetried &&
-            'error' in response &&
-            !isNil(refreshToken)
-          ) {
-            (response.meta as CallbackQueryFnMeta).retried = true
-            await dispatch(spotifyApi.endpoints.reconnect.initiate({ refreshToken }))
-            const { callback, args: callbackArgs } = args
-            await callback(callbackArgs)
-          }
-
-          return Promise.resolve()
-        }
+        callback: spotifyService.getPlaylists
       })
     })
   })

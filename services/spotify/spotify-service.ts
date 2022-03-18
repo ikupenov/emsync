@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid'
 import qs from 'query-string'
 import axios from 'axios'
 
+import { httpClient } from '../../http'
 import {
   SPOTIFY_ACCOUNTS_BASE_URL,
   SPOTIFY_API_URL,
@@ -9,7 +10,6 @@ import {
   SPOTIFY_REDIRECT_URL,
   SPOTIFY_SCOPE
 } from '../../config'
-import { httpClient } from '../../http'
 import {
   ConnectArgs,
   ConnectResult,
@@ -45,6 +45,7 @@ async function connect({ code, state }: ConnectArgs): Promise<ConnectResult> {
     '/spotify/access-token',
     { code, state }
   )
+
   return response.data
 }
 
@@ -53,6 +54,7 @@ async function reconnect({ refreshToken }: ReconnectArgs): Promise<ReconnectResu
     '/spotify/access-token',
     { refreshToken }
   )
+
   return response.data
 }
 
