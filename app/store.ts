@@ -7,12 +7,22 @@ import {
   Reducer
 } from '@reduxjs/toolkit'
 import { createWrapper, HYDRATE } from 'next-redux-wrapper'
-import { persistReducer, persistStore } from 'redux-persist'
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER
+} from 'redux-persist'
 
 import { storage } from './storage'
 import { spotifyApi } from './api/spotify-api'
 import { connectionsSlice, connectionsReducer } from '../features/connection'
 import { playlistsSlice, playlistsReducer } from '../features/playlists'
+import { isServerSide } from '../lib/common'
 
 const combinedReducer = combineReducers({
   [spotifyApi.reducerPath]: spotifyApi.reducer,
@@ -26,6 +36,9 @@ const hydratedReducer = (
   action: AnyAction
 ) => {
   if (action.type === HYDRATE) {
+    if (action.payload.app === 'init') delete action.payload.app
+    if (action.payload.page === 'init') delete action.payload.page
+
     // use previous state and apply delta from hydration
     const nextState = { ...state, ...action.payload }
     return nextState
@@ -34,26 +47,35 @@ const hydratedReducer = (
   return combinedReducer(state, action)
 }
 
-const persistedReducer = persistReducer(
-  { key: 'emsync', storage, blacklist: [spotifyApi.reducerPath] },
-  hydratedReducer as Reducer<ReturnType<typeof combinedReducer>>
-)
-
-export const store = configureStore({
-  reducer: persistedReducer,
+const makeConfiguredStore = (reducer: Reducer) => configureStore({
+  reducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      serializableCheck: false
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+      }
     }).concat(
       spotifyApi.middleware
     )
 })
 
-export const persistor = persistStore(store)
+export const makeStore = (): ReturnType<typeof makeConfiguredStore> => {
+  if (isServerSide()) {
+    return makeConfiguredStore(hydratedReducer)
+  }
 
-export const makeStore = () => store
+  const persistedReducer = persistReducer(
+    { key: 'emsync', storage, blacklist: [spotifyApi.reducerPath] },
+    hydratedReducer as Reducer<ReturnType<typeof combinedReducer>>
+  )
 
-type Store = ReturnType<typeof makeStore>
+  const store = makeConfiguredStore(persistedReducer)
+  store.persistor = persistStore(store)
+
+  return store
+}
+
+export type Store = ReturnType<typeof makeStore>
 
 export type RootState = ReturnType<Store['getState']>
 export type AppDispatch = Store['dispatch']

@@ -14,7 +14,7 @@ const initialState: PlaylistsState = {
 }
 
 export const getSpotifyPlaylists = createAsyncThunk(
-  'playlists/spotify',
+  'playlists/getSpotifyPlaylists',
   async (_, { getState, dispatch }) => {
     const state = getState() as RootState
 

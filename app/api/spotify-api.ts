@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { callbackBaseQuery } from './callback-base-query'
+import { callbackQuery } from './callback-base-query'
 import { ReconnectArgs } from '../../services/spotify/types'
 import {
   spotifyService,
@@ -11,7 +11,7 @@ import {
 
 export const spotifyApi = createApi({
   reducerPath: 'spotifyApi',
-  baseQuery: callbackBaseQuery(),
+  baseQuery: callbackQuery(),
   endpoints: builder => ({
     connect: builder.mutation<ConnectResult, ConnectArgs>({
       query: ({ code, state }) => ({
